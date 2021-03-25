@@ -119,6 +119,8 @@
                         }
                         </tbody>
                     </table>
+                    
+                    @await Html.PartialAsync("Pagination", products.GetInfo())
                 </div>
             </div>
         </div>

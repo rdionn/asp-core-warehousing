@@ -64,7 +64,7 @@ namespace Warehouse.Areas.Admin.Controllers {
             if (shippingId != null)
             {
                 var shippingBill = await _shippingBill.GetShippingBill(shippingId.Value);
-                var shippingProducts = await _shippingBill.GetShippingProducts(shippingId.Value, page ?? 1, entry ?? 1);
+                var shippingProducts = await _shippingBill.GetShippingProducts(shippingId.Value, page ?? 1, entry ?? 10);
                 var addShippingProduct = new AddShippingProduct();
 
                 ViewData["Products"] = shippingProducts;
