@@ -1,0 +1,80 @@
+@using Warehouse.Models
+@using Warehouse.Services.Contracts
+
+@model Product
+
+@{
+    ViewData["Title"] = String.Format("Detail {0} - Dashboard", new Object[] { Model.Name });
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                   <h6 class="m-0 font-weight-bold text-primary">Detail Product @Model.Name</h6>
+                </div>
+
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                   <h6 class="m-0 font-weight-bold text-primary">Warehouse Stock Available</h6>
+                </div>
+
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>Product</td>
+                                <td>Location</td>
+                                <td>Stock</td>
+                                <td>Status</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var locations = ViewData["Locations"] as PagedList<ProductWarehouse>;
+                            }
+
+                            @if (locations.Data.Count > 0) {
+                                @foreach (var pw in locations.Data)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Model.Name
+                                        </td>
+                                        <td>
+                                            @pw.Warehouse.Name
+                                        </td>
+                                        <td>
+                                            @pw.Stock
+                                        </td>
+                                        <td>
+                                            @if (pw.Stock > 0) {
+                                                <span class="badge badge-success">Stock Available</span>
+                                            } else {
+                                                <span class="badge badge-danger">Out Of Stock</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="4"><p class="text-center mb-0">No Product In Warehouse Yet</p></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    @await Html.PartialAsync("Pagination", locations.GetInfo())
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

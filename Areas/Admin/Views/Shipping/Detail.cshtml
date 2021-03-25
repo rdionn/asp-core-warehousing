@@ -1,0 +1,156 @@
+@using System.Collections.Generic
+@using Warehouse.Models
+@using Warehouse.Services.Contracts
+@using Warehouse.Ui
+@model ShippingBill
+
+@{
+    ViewData["Title"] = "Detail Shipping - Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Detail Shipping @Model.BillInvoice</h6>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex flex-column">
+                        <label>To Warehouse</label>
+                        <p class="font-weight-bold mb-1">@Model.Warehouse.Name</p>
+                    </div>
+                    
+                    <div class="d-flex flex-column">
+                        <label>Address</label>
+                        <p class="font-weight-bold mb-1">@Model.Warehouse.Address</p>
+                    </div>
+                    
+                    <div class="d-flex flex-column">
+                        <label>Bill Invoice</label>
+                        <p class="font-weight-bold mb-1">@Model.BillInvoice</p>
+                    </div>
+
+                    <div class="d-flex flex-column">
+                        <label>Status</label>
+                        <p class="font-weight-bold mb-1">@Model.Status</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-12 col-12">
+            <div class="modal fade" id="add-product" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Add Product</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="shipping-add-product" method="post" action="/admin/api/shipping/add-product">
+                                @Html.AntiForgeryToken()
+                                
+                                <input type="hidden" name="ShippingBillId" value="@Model.Id"/>
+                                
+                                <div class="form-group">
+                                    <label>Product</label>
+                                    <select id="shipping-product" class="form-control product-select" name="ProductId">
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Qty</label>
+                                    <input type="text" class="form-control" name="Qty"/>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" id="add-product-btn" class="btn btn-primary">Add Product</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">List Product</h6>
+                        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#add-product"><i class="fas fa-plus mr-1"></i> Add</button>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td>Qty</td>
+                            <td>Action</td>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        @{
+                            var products = ViewData["Products"] as PagedList<ShippingBillProduct>;
+                        }
+
+                        @if (products.TotalData > 0)
+                        {
+                            @foreach (var product in products.Data)
+                            {
+                                <tr>
+                                    <td>@product.Product.Name</td>
+                                    <td>@product.Qty</td>
+                                    <td></td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3">
+                                    <p class="text-center mb-0">No Product To Shipping Yet</p></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
+    <script>
+        $('#add-product-btn').on('click', function (e) {
+            $.ajax({
+                method: 'POST',
+                url: '/admin/api/shipping/add-product',
+                contentType: false,
+                processData: false,
+                data: new FormData(document.getElementById('shipping-add-product'))
+            }).then(function (response) {
+                var code = response.status
+                
+                if (code === 200) {
+                    window.location.reload()
+                } else {
+                }
+            }).catch(function (e) {
+                console.log(e)
+            })
+        })
+        
+        $('.product-select').autoComplete({
+            resolverSettings: {
+                url: '/admin/api/product/search-product'
+            }
+        });
+    </script>
+}

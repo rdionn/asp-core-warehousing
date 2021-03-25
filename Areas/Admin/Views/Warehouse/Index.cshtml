@@ -1,0 +1,60 @@
+@using Warehouse.Services.Contracts
+@model PagedList<Warehouse.Models.Warehouse>
+
+@{
+    ViewData["Title"] = "List Warehouse - Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">List Warehouse</h6>
+                        <a href="/admin/warehouse/create" class="btn btn-primary btn-sm"><i class="fas fa-plus mr-2"></i>Add</a>
+                    </div>
+                    
+                </div>
+
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>Name</td>
+                                <td>Address</td>
+                                <td>Phone</td>
+                                <td>Email</td>
+                                <td>Action</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TotalData > 0) {
+                                @foreach (var warehouse in Model.Data) {
+                                    <tr>
+                                        <td>@warehouse.Name</td>
+                                        <td>@warehouse.Address</td>
+                                        <td>@warehouse.Phone</td>
+                                        <td>@warehouse.Email</td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a href="#" class="btn btn-primary btn-sm mr-2">Detail</a>
+                                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="5"><p class="text-center mb-0">No Warehouse Yet</p></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    @await Html.PartialAsync("Pagination", Model.GetInfo())
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

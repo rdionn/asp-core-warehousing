@@ -1,0 +1,79 @@
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.WebUtilities
+@using Warehouse.Services.Contracts
+@using Warehouse.Helpers
+
+@model PagedListInfo
+@{
+    var current = Model.CurrentPage;
+    var lastPage = Model.TotalPages;
+    var left = current - 2;
+    var right = current + 2 + 1;
+    var range = new List<int>();
+    var dots = new List<int>();
+    var l = 0;
+
+    for (var i = 1; i <= lastPage; i++) {
+        if (i == 1 || i == lastPage || i >= left && i < right) {
+            range.Add(i);
+        }
+    }
+
+    foreach (var num in range) {
+        if (l != 100000) {
+            if (num - l == 2) {
+                dots.Add(l + 1);
+            } else if (num - l != 1) {
+                dots.Add(-100);
+            }
+        }
+        dots.Add(num);
+        l = num;
+    }
+}
+
+@if (dots.Count > 0) {
+    <ul class="pagination">
+        @if (current == 1) {
+            <li class="page-item disabled">
+                <a href="#" class="page-link">First</a>
+            </li>
+        } else {
+            <li class="page-item">
+                <a href="@PageUrlHelper.BuildPageQuery(Context.Request.Path, 1, Context.Request.Query)" class="page-link">First</a>
+            </li>
+        }
+
+        @foreach (var data in dots) {      
+            @if (data == current) {
+                <li class="page-item active">
+                    <a href="@PageUrlHelper.BuildPageQuery(Context.Request.Path, data, Context.Request.Query)" class="page-link">
+                        @data
+                    </a>
+                </li>
+            } else if (data > -100) {
+                <li class="page-item">
+                    <a href="@PageUrlHelper.BuildPageQuery(Context.Request.Path, data, Context.Request.Query)" class="page-link">
+                        @data
+                    </a>
+                </li>
+            } else {
+                <li class="page-item">
+                    <a href="#" class="page-link">
+                        ...
+                    </a>
+                </li>
+            }
+        }
+
+        @if (current == lastPage) {
+            <li class="page-item disabled">
+                <a href="#" class="page-link">Last</a>
+            </li>
+        } else {
+            <li class="page-item">
+                <a href="@PageUrlHelper.BuildPageQuery(Context.Request.Path, lastPage, Context.Request.Query)" class="page-link">Last</a>
+            </li>
+        }
+    </ul>
+}
