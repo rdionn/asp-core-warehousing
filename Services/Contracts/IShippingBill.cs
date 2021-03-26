@@ -13,5 +13,7 @@ namespace Warehouse.Services.Contracts
         Task<PagedList<ShippingBill>> GetShippingBill(int warehouseId, int page, int entry);
         Task<PagedList<ShippingBillProduct>> GetShippingProducts(int shippingId, int page, int entry);
         Task<ShippingBill> GetShippingBill(int shippingBillId);
+        Task<PagedList<ShippingBill>> GetShippingBillWarehouse(int warehouseId, int page, int entry);
+        Task<bool> SendShipment(int shippmentId);
     }
 }

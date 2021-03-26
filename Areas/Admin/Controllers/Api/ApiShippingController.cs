@@ -41,5 +41,30 @@ namespace Warehouse.Areas.Admin.Controllers.Api
                 Errors = errors
             });
         }
+
+        [Route("admin/api/shipping/send")]
+        [HttpPost]
+        public async Task<IActionResult> SendShipment([FromForm(Name = "shippingId")] int? shippingId)
+        {
+            if (shippingId != null)
+            {
+                var result = await _shippingBill.SendShipment(shippingId.Value);
+
+                if (result)
+                {
+                    return Json(new
+                    {
+                        Status = 200,
+                        Message = "Success Send Bill"
+                    });
+                }
+            }
+
+            return Json(new
+            {
+                Status = 422,
+                Message = "Can't Send Bill"
+            });
+        }
     }
 }

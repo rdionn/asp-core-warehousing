@@ -36,6 +36,10 @@
                         <label>Status</label>
                         <p class="font-weight-bold mb-1">@Model.Status</p>
                     </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <button id="send-bill" data-id="@Model.Id" class="btn btn-primary"><i class="fas fa-paper-plane mr-1"></i> Send</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -154,5 +158,25 @@
                 url: '/admin/api/product/search-product'
             }
         });
+        
+        $('#send-bill').one('click', function (e) {
+            var shippmentId = $(this).attr('data-id')
+            
+            $.ajax({
+                method: 'POST',
+                url: '/admin/api/shipping/send',
+                data: {
+                    shippingId: shippmentId
+                }
+            }).then(function (result) {
+                var status = result.status
+                
+                if (status == 200) {
+                    window.location = '/admin/shippings'
+                }
+            }).catch(function (e) {
+                console.log(e)
+            })
+        })
     </script>
 }

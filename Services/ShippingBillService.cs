@@ -111,5 +111,55 @@ namespace Warehouse.Services
 
             return null;
         }
+
+        public async Task<PagedList<ShippingBill>> GetShippingBillWarehouse(int warehouseId, int page, int entry)
+        {
+            try
+            {
+                var billQuery = _appContext.ShippingBills
+                    .AsNoTracking()
+                    .AsQueryable()
+                    .Where(sb => sb.WarehouseId == warehouseId && sb.Status == "SENDING");
+
+                var bills = await billQuery.Skip((page - 1) * entry).Take(entry).ToListAsync();
+                var countData = await billQuery.CountAsync();
+                
+                return new PagedList<ShippingBill>()
+                {
+                    Data = bills,
+                    TotalData = countData,
+                    TotalPages = (int)Math.Round((double)countData / entry),
+                    CurrentPage = page
+                };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error Get Shipping Bill Warehouse");
+            }
+
+            return new PagedList<ShippingBill>();
+        }
+
+        public async Task<bool> SendShipment(int shippmentId)
+        {
+            try
+            {
+                var bill = await _appContext.ShippingBills.Where(sb => sb.Id == shippmentId && sb.Status == "DRAFT")
+                    .SingleOrDefaultAsync();
+
+                if (bill != null)
+                {
+                    bill.Status = "SENDING";
+                    await _appContext.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error Send Shipment Bill");
+            }
+
+            return false;
+        }
     }
 }

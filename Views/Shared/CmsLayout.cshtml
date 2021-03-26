@@ -27,9 +27,9 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
         @{
-            if (User.IsInRole("ADMIN")) {
+            if (User.IsInRole("ADMIN") && Context.Request.Path.ToString().StartsWith("/admin")) {
                 @await Html.PartialAsync("AdminNavigation")
-            } else if (User.IsInRole("WAREHOUSE_ADMIN")) {
+            } else if (User.IsInRole("WAREHOUSE_ADMIN") && Context.Request.Path.ToString().StartsWith("/warehouse")) {
                 @await Html.PartialAsync("WarehouseNavigation")
             }
         }

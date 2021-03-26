@@ -1,0 +1,50 @@
+@using Warehouse.Models
+@using Warehouse.Services.Contracts
+@model PagedList<ShippingBill>
+
+@{
+        ViewData["Title"] = "List Of Shipping - Dashboard";
+}
+
+<div class="container-fluid">
+        <div class="row">
+                <div class="col-md-12 col-12">
+                        <div class="card shadow-sm">
+                                <div class="card-header">
+                                        <h6 class="m-0 font-weight-bold text-primary">Bill List</h6>
+                                </div>
+                                <div class="card-body">
+                                        <table class="table table-bordered">
+                                                <thead>
+                                                <tr>
+                                                        <td>Invoice</td>
+                                                        <td>Action</td>
+                                                </tr>
+                                                </thead>
+                                                
+                                                <tbody>
+                                                @if (Model.TotalData > 0)
+                                                {
+                                                        @foreach (var bill in Model.Data)
+                                                        {
+                                                                <tr>
+                                                                        <td>@bill.BillInvoice</td>
+                                                                        <td></td>
+                                                                </tr>
+                                                        }
+                                                }
+                                                else
+                                                {
+                                                        <tr>
+                                                                <td colspan="2"><p class="text-center mb-0">No Shipping Yet</p></td>
+                                                        </tr>
+                                                }
+                                                </tbody>
+                                        </table>
+                                        
+                                        @await Html.PartialAsync("Pagination", Model.GetInfo())
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
